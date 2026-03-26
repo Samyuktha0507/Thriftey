@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thriftey — Smart Financial Dashboard</title>
+  <meta name="description" content="Thriftey: AI-powered financial decision engine for small businesses. Track liquidity, manage obligations, and optimize cash flow.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Gravitas+One&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+  <div class="login-wrapper" style="display:flex">
+    <div class="login-card glass-glow">
+      <div class="login-logo">THRIFTEY</div>
+      <div class="login-subtitle" data-i18n="login_subtitle">Financial Intelligence for Small Business</div>
+      <form id="login-form">
+        <div class="form-group">
+          <label data-i18n="email">Email</label>
+          <input type="email" id="login-email" value="priya@thriftey.com" placeholder="you@business.com" required>
+        </div>
+        <div class="form-group">
+          <label data-i18n="password">Password</label>
+          <input type="password" id="login-password" value="demo1234" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary" id="login-btn">🔐 <span data-i18n="sign_in">Sign In</span></button>
+        <div class="error-msg" id="login-error"></div>
+        <div style="margin-top:1rem; text-align:center; font-size:0.72rem; color:var(--text-muted)">
+          <span data-i18n="demo_accounts">Demo accounts</span>: priya@thriftey.com · arjun@thriftey.com<br>
+          <span data-i18n="password">Password</span>: demo1234
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════ APP LAYOUT ═══════════════ -->
+  <div class="app-layout">
+
+    <!-- ── Sidebar ──────────────────────────── -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">THRIFTEY</div>
+      <div class="sidebar-business">Loading…</div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-page="dashboard" href="#">
+          <span class="nav-icon">📊</span> <span data-i18n="nav_dashboard">Dashboard</span>
+        </a>
+        <a class="nav-item" data-page="obligations" href="#">
+          <span class="nav-icon">📋</span> <span data-i18n="nav_obligations">Obligations</span>
+        </a>
+        <a class="nav-item" data-page="whatif" href="#">
+          <span class="nav-icon">🔮</span> <span data-i18n="nav_whatif">What-If Simulator</span>
+        </a>
+        <a class="nav-item" data-page="health" href="#">
+          <span class="nav-icon">💚</span> <span data-i18n="nav_health">Health Score</span>
+        </a>
+        <a class="nav-item" data-page="gst" href="#">
+          <span class="nav-icon">🧾</span> <span data-i18n="nav_gst">GST Reminders</span>
+        </a>
+        <a class="nav-item" data-page="email" href="#">
+          <span class="nav-icon">✉️</span> <span data-i18n="nav_email">Email Drafts</span>
+        </a>
+        <a class="nav-item" data-page="community" href="#">
+          <span class="nav-icon">👥</span> <span data-i18n="nav_community">Community</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" id="logout-btn">⬅ <span data-i18n="logout">Logout</span></button>
+      </div>
+    </aside>
+
+    <!-- ── Right Side ─────────────────────────── -->
+    <div class="right-side">
+
+      <!-- ── Top Bar ──────────────────────────── -->
+      <header class="topbar">
+        <div class="topbar-title" data-i18n="nav_dashboard">Dashboard</div>
+        <div class="topbar-right">
+          <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" onclick="setLanguage('hi')">हिंदी</button>
+            <button class="lang-btn" onclick="setLanguage('ta')">தமிழ்</button>
+          </div>
+          <span class="topbar-date"></span>
+        </div>
+      </header>
+
+      <!-- ── Main Content ─────────────────────── -->
+      <main class="main-content">
+
+        <!-- ════════ DASHBOARD PAGE ════════ -->
+        <div class="page-view active" id="page-dashboard">
+          <div class="stats-grid">
+            <div class="stat-card glass-glow fade-in">
+              <div class="stat-label" data-i18n="days_to_zero">Days to Zero</div>
+              <div class="stat-value hero" id="stat-dtz">—</div>
+              <div class="stat-change" data-i18n="cash_runway">Cash runway countdown</div>
+            </div>
+            <div class="stat-card glass fade-in stagger-1">
+              <div class="stat-label" data-i18n="cash_balance">Cash Balance</div>
+              <div class="stat-value" id="stat-cash">—</div>
+              <div class="stat-change" data-i18n="available_funds">Available funds</div>
+            </div>
+            <div class="stat-card glass fade-in stagger-2">
+              <div class="stat-label" data-i18n="active_obligations">Active Obligations</div>
+              <div class="stat-value" id="stat-obligations">—</div>
+              <div class="stat-change" data-i18n="unpaid_month">Unpaid this month</div>
+            </div>
+            <div class="stat-card glass fade-in stagger-3">
+              <div class="stat-label" data-i18n="expected_receivables">Expected Receivables</div>
+              <div class="stat-value" style="color:var(--success)" id="stat-receivables">—</div>
+              <div class="stat-change" data-i18n="next_30_days">In next 30 days</div>
+            </div>
+          </div>
+          <div class="content-grid">
+            <div class="glass card-body">
+              <div class="card-title">📋 <span data-i18n="top_obligations">Top Priority Obligations</span></div>
+              <div id="dash-obligations-list"></div>
+            </div>
+            <div class="glass card-body">
+              <div class="card-title" style="color:var(--success)">💰 <span data-i18n="expected_receivables">Expected Receivables</span></div>
+              <div id="dash-receivables-list"></div>
+            </div>
+          </div>
+          <div class="glass card-body">
+            <div class="card-title">📈 <span data-i18n="runway_chart">6-Month Cash Runway</span></div>
+            <div class="runway-bars" id="runway-chart"></div>
+          </div>
+        </div>
+
+        <!-- ════════ OBLIGATIONS PAGE ════════ -->
+        <div class="page-view" id="page-obligations" style="display:none">
+          <div class="conflict-banner" id="conflict-banner" style="display:none"></div>
+          <div class="glass card-body">
+            <div class="card-title">📋 <span data-i18n="all_obligations">All Obligations — Prioritized</span></div>
+            <div class="stat-change" style="margin-bottom:1rem;margin-top:-0.5rem" data-i18n="sorted_priority">
+              Ranked by engine priority score. Priority bar = weighted urgency + penalty + relationship + flexibility.
+            </div>
+            <div id="obligations-list"></div>
+          </div>
+        </div>
+
+        <!-- ════════ WHAT-IF PAGE ════════ -->
+        <div class="page-view" id="page-whatif" style="display:none">
+          <div class="glass card-body" style="margin-bottom:1.5rem">
+            <div class="card-title">🔮 <span data-i18n="whatif_title">What-If Scenario Builder</span></div>
+            <p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1.5rem" data-i18n="whatif_desc">
+              Change a financial variable and instantly see how it impacts your cash runway.
+            </p>
+            <div class="stats-grid" style="margin-bottom:1.5rem">
+              <div class="stat-card glass">
+                <div class="stat-label" data-i18n="current_cash">Current Cash</div>
+                <div class="stat-value" id="whatif-current-cash">—</div>
+              </div>
+              <div class="stat-card glass">
+                <div class="stat-label" data-i18n="current_runway">Current Runway</div>
+                <div class="stat-value" id="whatif-current-dtz">—</div>
+              </div>
+            </div>
+            <div class="whatif-controls">
+              <div class="control-group">
+                <label data-i18n="variable">Variable</label>
+                <select id="whatif-variable">
+                  <option value="cash_balance">Cash Balance</option>
+                  <option value="obligation_amount">Obligation Amount</option>
+                </select>
+              </div>
+              <div class="control-group">
+                <label id="whatif-value-label" data-i18n="new_cash">New Cash Balance (₹)</label>
+                <input type="number" id="whatif-new-value" placeholder="Enter new value">
+              </div>
+              <div>
+                <button class="btn-primary" id="whatif-run-btn" style="width:auto;padding:0.65rem 1.5rem">⚡ <span data-i18n="run_sim">Run Simulation</span></button>
+              </div>
+            </div>
+          </div>
+          <div id="whatif-results"></div>
+        </div>
+
+        <!-- ════════ HEALTH SCORE PAGE ════════ -->
+        <div class="page-view" id="page-health" style="display:none">
+          <div class="content-grid">
+            <div class="glass card-body" style="text-align:center">
+              <div class="card-title" style="justify-content:center">💚 <span data-i18n="health_title">Financial Health Score</span></div>
+              <div class="gauge-container" id="health-gauge"></div>
+            </div>
+            <div class="glass card-body">
+              <div class="card-title">📊 <span data-i18n="score_breakdown">Score Breakdown</span></div>
+              <div id="health-factors"></div>
+              <div id="health-meta"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════ GST PAGE ════════ -->
+        <div class="page-view" id="page-gst" style="display:none">
+          <div class="glass card-body" style="margin-bottom:1rem">
+            <div class="card-title">🧾 <span data-i18n="gst_title">Upcoming GST Filing Deadlines</span></div>
+            <p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:0.5rem" data-i18n="gst_desc">
+              Stay ahead of GSTR-1 and GSTR-3B filings. Late penalty: ₹50/day.
+            </p>
+          </div>
+          <div id="gst-list" style="display:flex;flex-direction:column;gap:0.75rem"></div>
+        </div>
+
+        <!-- ════════ EMAIL DRAFTS PAGE ════════ -->
+        <div class="page-view" id="page-email" style="display:none">
+          <div class="glass card-body" style="margin-bottom:1rem">
+            <div class="card-title">✉️ <span data-i18n="email_title">Context-Aware Email Drafts</span></div>
+            <p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:0.5rem" data-i18n="email_desc">
+              Auto-generated negotiation emails tailored to each counterparty relationship.
+            </p>
+          </div>
+          <div id="email-list"></div>
+        </div>
+
+        <!-- ════════ COMMUNITY PAGE ════════ -->
+        <div class="page-view" id="page-community" style="display:none">
+          <!-- Post List View -->
+          <div id="community-list-view">
+            <div class="glass card-body" style="margin-bottom:1rem">
+              <div class="card-title">👥 <span data-i18n="community_title">Community Forum</span></div>
+              <p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem" data-i18n="community_desc">
+                Connect with fellow small business owners. Share tips, ask questions, and learn together.
+              </p>
+              <!-- New Post Form -->
+              <div class="new-post-form" id="new-post-form">
+                <div class="form-row">
+                  <div class="form-group" style="margin-bottom:0">
+                    <input type="text" id="new-post-title" placeholder="Post title..." style="font-size:0.85rem">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;max-width:160px">
+                    <select id="new-post-category" style="font-size:0.85rem">
+                      <option value="cash_flow">💰 Cash Flow</option>
+                      <option value="gst">🧾 GST</option>
+                      <option value="suppliers">🤝 Suppliers</option>
+                      <option value="general">💬 General</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0.75rem">
+                  <textarea id="new-post-content" placeholder="Share your thoughts..." rows="2"></textarea>
+                </div>
+                <button class="btn-ghost" onclick="createPost()" id="create-post-btn">📝 <span data-i18n="post_btn">Post to Community</span></button>
+              </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="forum-controls">
+              <button class="category-pill active" onclick="filterPosts(null, this)" data-i18n="all">All</button>
+              <button class="category-pill" onclick="filterPosts('cash_flow', this)">💰 <span data-i18n="cash_flow">Cash Flow</span></button>
+              <button class="category-pill" onclick="filterPosts('gst', this)">🧾 <span data-i18n="gst_cat">GST</span></button>
+              <button class="category-pill" onclick="filterPosts('suppliers', this)">🤝 <span data-i18n="suppliers">Suppliers</span></button>
+              <button class="category-pill" onclick="filterPosts('general', this)">💬 <span data-i18n="general">General</span></button>
+            </div>
+
+            <!-- Posts -->
+            <div id="community-posts"></div>
+          </div>
+
+          <!-- Post Detail View (hidden by default) -->
+          <div id="community-detail-view" style="display:none">
+            <div id="community-detail-content"></div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
